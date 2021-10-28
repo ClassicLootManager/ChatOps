@@ -33,7 +33,7 @@ setmetatable(ChatOps, ChatOpsMeta)
 
 local handlers = {}
 
-handlers["^AutoComplete:.*"] = function(text) 
+handlers["^AutoComplete:.*"] = function(text)
     local editBox = SELECTED_CHAT_FRAME.editBox
     editBox:Show()
     editBox:SetText(text)

@@ -1,8 +1,7 @@
 name: Build addon archive
 on:
-  push:
-    tags:
-      - 'v*'
+  release:
+    types: [published]
 jobs:
   build:
     name: Build package
@@ -13,35 +12,13 @@ jobs:
         run: pipx install gitman
       - name: install dependencies
         run: gitman install
-      - name: Set env
-        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-      - name: Find and Replace
-        uses: jacobtomlinson/gha-find-replace@master
-        with:
-          find: "{VERSION}"
-          replace: "${{ env.RELEASE_VERSION }}"
-      - run: zip -r LibChatOps.zip -x '*.git*'
-      - name: Create GitHub release
-        uses: Roang-zero1/github-create-release-action@master
-        with:
-          version_regex: ^v[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+
-          #prerelease_regex: "^v0\\.[[:digit:]]+\\.[[:digit:]]+"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Remove git dirs
+        run: find libs -type d -name ".git" -execdir rm -rf {} \; -prune
+      - run: sed -i "s/{VERSION}/${{ github.event.release.tag_name }}/g" *.toc
+      - run: name=$(basename $(pwd)) pushd ..; zip -r $name/release.zip $name; popd 
       - name: Upload artifact to github
         uses: fnkr/github-action-ghr@v1
         env:
-          GHR_PATH: LibEventDispatcher.zip
+          GHR_PATH: release.zip
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      # - name: Upload to curseforge
-      #   uses: itsmeow/curseforge-upload@master
-      #   with:
-      #     token: ${{ secrets.CURSEFORGE_TOKEN }}
-      #     project_id: 457141
-      #     game_endpoint: wow
-      #     file_path: LibEventDispatcher.zip
-      #     changelog: See github for changes
-      #     display_name: LibEventDispatcher
-      #     game_versions: 1-13-6
-      #     release_type: alpha
-          #relations:
+
