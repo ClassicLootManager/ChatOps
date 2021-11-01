@@ -11,13 +11,18 @@ if ChatOps == nil then return end
 local callbackLinks = {}
 
 local ChatOpsIndex = {}
+
 function ChatOpsIndex.createCallbackLink(linkText, callback)
     callbackLinks[#callbackLinks+1] = callback
     return string.format("|HCallback:%s|h[%s]|h", #callbackLinks, linkText)
 end
 
+function ChatOpsIndex.colorize(text, argb)
+    return string.format("|c%s%s|r", argb, text)
+end
+
 function ChatOpsIndex.createAutoCompleteLink(linkText, prefill)
-    return string.format("|c%s|HAutoComplete:%s|h[%s]|h|r", prefill, linkText)
+    return string.format("|HAutoComplete:%s|h[%s]|h", prefill, linkText)
 end
 
 
@@ -33,14 +38,14 @@ setmetatable(ChatOps, ChatOpsMeta)
 
 local handlers = {}
 
-handlers["^AutoComplete:.*"] = function(text)
+handlers["^AutoComplete:(.*)"] = function(text)
     local editBox = SELECTED_CHAT_FRAME.editBox
     editBox:Show()
     editBox:SetText(text)
     editBox:SetFocus()
 end
 
-handlers["^Callback:%d+"] = function(index)
+handlers["^Callback:(%d+)"] = function(index)
     pcall(callbackLinks[tonumber(index)])
 end
 
