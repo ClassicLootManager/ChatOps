@@ -1,0 +1,13 @@
+{
+  "branches": ["master"],
+  "plugins": [
+    ["@semantic-release/exec", {
+      "prepareCmd": "./prepare.sh ${nextRelease.version}"
+    }],
+    ["@semantic-release/github", {
+      "assets": [
+        {"path": "release.zip", "label": "Addon package"}
+      ]
+    }]
+  ]
+}
