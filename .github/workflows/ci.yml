@@ -1,6 +1,7 @@
 name: Continuous integration
 on:
   push:
+    - master
 jobs:
   lint:
     name: Run luacheck
