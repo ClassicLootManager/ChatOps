@@ -3,4 +3,4 @@
 ## Author: Sam Mousa
 ## Version: {VERSION}
 ## Notes: Library for chat based addon interaction
-LibChatOps.xml
+ChatOps.xml
